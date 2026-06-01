@@ -1,0 +1,13 @@
+# Build configuration only. Project metadata lives in setup.cfg (mirroring the
+# shellcheck-py layout this package is modelled on).
+#
+# `setuptools-download` MUST be declared here so it is present in the isolated
+# PEP 517 build environment that pip / pre-commit use. That is what processes
+# the [setuptools_download] section of setup.cfg and fetches the falco binary
+# at build time.
+[build-system]
+requires = ["setuptools>=61", "wheel", "setuptools-download"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+target-version = "py39"

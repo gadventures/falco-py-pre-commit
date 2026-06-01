@@ -1,0 +1,20 @@
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Virtualenvs / tox
+.venv/
+venv/
+.tox/
+
+# Downloaded falco binary (fetched at build time, never committed)
+falco
+
+# OS / editor cruft
+.DS_Store

@@ -1,0 +1,58 @@
+version: 2.1
+
+# Matrix jobs expand to `smoke-3.9-medium`, `smoke-3.9-arm.medium`, ... in the
+# CircleCI UI, so both the python version and the arch are visible at the job
+# level -- no need to repeat them in every step name.
+#
+# cimg/python is a multi-arch manifest list on Docker Hub, so the same image
+# tag resolves to the right arch based on the resource_class.
+
+jobs:
+  smoke:
+    parameters:
+      python-version:
+        type: string
+      resource-class:
+        type: string
+    docker:
+      - image: cimg/python:<< parameters.python-version >>
+    resource_class: << parameters.resource-class >>
+    environment:
+      # Pin every `uvx` in tox / smoke-test.sh to this exact interpreter so uv
+      # can't silently grab a different Python from its own managed cache.
+      UV_PYTHON: << parameters.python-version >>
+    steps:
+      - checkout
+      - run:
+          name: Install uv
+          command: |
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$BASH_ENV"
+      - run:
+          name: Show versions
+          command: |
+            python --version
+            uv --version
+      - run:
+          name: tox (build + falco --version + lint fixture)
+          command: uvx tox
+      - run:
+          name: End-to-end try-repo smoke test
+          command: testing/smoke-test.sh
+
+workflows:
+  test:
+    jobs:
+      - smoke:
+          matrix:
+            parameters:
+              python-version:
+                - "3.9"
+                - "3.10"
+                - "3.11"
+                - "3.12"
+                - "3.13"
+                - "3.14"
+              resource-class:
+                - "medium"
+                - "arm.medium"

@@ -1,0 +1,27 @@
+- id: falco-lint-all-changed
+  name: falco lint (all changed VCL)
+  description: Lint each changed Fastly VCL file with falco
+  entry: falco-lint-all-changed
+  language: python
+  files: \.vcl$
+  require_serial: true
+- id: falco
+  name: falco
+  description: >-
+    Run falco with your own subcommand/flags (e.g. lint a single entrypoint,
+    fmt, test). Supply `args:` in your .pre-commit-config.yaml.
+  entry: falco
+  language: python
+  files: \.vcl$
+  pass_filenames: false
+  require_serial: true
+- id: falco-version
+  name: falco --version
+  description: >-
+    Diagnostic/CI helper: prints the bundled falco version. Runs
+    unconditionally; useful for asserting the pinned version in CI.
+  entry: falco
+  args: [--version]
+  language: python
+  always_run: true
+  pass_filenames: false
